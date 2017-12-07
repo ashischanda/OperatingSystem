@@ -1,0 +1,87 @@
+To run the files, you need to have a complete linux kernel installed in your system. You can find a list of kernel here: https://www.kernel.org/
+
+For example, I installed linux 4.1.45
+
+command:
+$ wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.46.tar.xz
+
+Now, you can go to the file folder and run make file.
+$ make
+
+You will find there is one .ko file. It is a kernel object file. Now, to add this module in your system, you need to attach it as a root user.
+
+$ sudo insmod ./hello_printk.ko
+
+To see your module in system,
+$ cat /proc/modules
+
+Another command to see or display your module with size and uses information:
+$ lsmod
+
+To check specific module information:
+$ modinfo hello_printk.ko
+
+To remove your module:
+$ sudo rmmod hello_printk.ko
+
+By the way, you can't see any text /output in your console. Because, the printk keeps messages in kernel. Hence, we can't see anything in user interface. To get the "Hello world" message, you need to look at kernel messages using 'dmesg' command or cat /var/log/syslog
+
+$ dmesg
+
+$ cat /var/log/syslog
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Reference:
+
+[1] http://www.tldp.org/LDP/lkmpg/2.6/lkmpg.pdf
+[2] http://www.linuxdevcenter.com/pub/a/linux/2007/07/05/devhelloworld-a-simple-introduction-to-device-drivers-under-linux.html
+[3] http://freesoftwaremagazine.com/articles/drivers_linux/
+ 
+-------------------------
+Making a character device driver:
+For this test, you need to make a virtual drive, a driver (a module to say how to read the drive), a user space code to access the drive.
+
+
+------- Making a kernel module code like file structure (read, write methods...)
+
+Attach it in module:
+
+# sudo insmod memory.ko
+
+ 
+--------- Making a drive (as a file)
+
+To achieve this, a file (which will be used to access the device driver) must be created, by typing the following command as root:
+
+# sudo mknod /dev/memory c 60 0
+
+
+In the above, c means that a char device is to be created, 60 is the major number and 0 is the minor number.
+
+It’s also convenient to unprotect the device:
+# sudo chmod 666 /dev/memory
+
+ 
+--------- Making a userspace code and try to access it as a file ( open("/dev/memory","r"))
+
+
+
+Don't forget to remove the module
+
+# sudo rmmod memory.ko
