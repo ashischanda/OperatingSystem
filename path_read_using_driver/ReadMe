@@ -1,0 +1,39 @@
+For making a device driver:
+we need to make a virtual drive, a driver (a module to say how to read the drive), a user space code to access the drive.
+
+At first, we need to have a complete linux kernel installed in our system. We can find a list of kernel here: https://www.kernel.org/
+For example, We installed linux 4.1.45
+command:
+$ wget https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-4.1.46.tar.xz
+
+
+--------- Making a drive: (as a file)
+To achieve this, a file (which will be used as the device driver) need to create typing the following command as root:
+
+$ sudo mknod /dev/path_reader_driver c 248 0
+
+In the above, c means that a char device is to be created, 248 is the major number and 0 is the minor number. 
+Major number is used for kernel to link the file with a driver/module.
+
+It’s also convenient to unprotect the device:
+$ sudo chmod 666 /dev/path_reader_driver
+
+--------- Making a driver:
+- To make a driver, we made a kernel module code that has file structure (read, write methods...) for access. The file is path_reader_driver.c. 
+- Keep path_reader_driver and Makefile in same folder.
+Now, you can go to the file folder and run make file.
+$ make
+
+You will find there is one .ko file. It is a kernel object file. Now, to add this module in your system, you need to attach it as a root user.
+
+$ sudo insmod path_reader_driver.ko
+
+--------- Making a userspace code:
+Our input_read.c is userspace code that will try to access driver as a file ( open("/dev/path_reader_driver","r"))
+
+
+After completing our task, it is important to remove the module
+$sudo rmmod path_reader_driver.ko
+
+To display your module, use the following command:
+$ lsmod
